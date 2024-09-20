@@ -1096,6 +1096,7 @@ def ECA():
     global PMH
     global EXP
     global EXPR
+    global EH
     global F
     global EMH
     global CCQ
