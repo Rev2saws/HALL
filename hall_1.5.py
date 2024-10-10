@@ -1,4 +1,4 @@
-﻿##
+##
 ##
 ## This Game Was Developed By Sam Waters AKA: Rev2saws
 ## Please Do Not Claim This Game As Your Own
@@ -66,8 +66,12 @@ CRTC = 5
 CRTM = 2
 ## The Total Amount Of The Players Gold
 PGT = 0
+## <<---NICE
 ## Keeps Track Of The Current Players Level
 CPL = 1
+## Food Meter Max And Food Meter
+FMM = 100
+FM = 100
 ## Locks For The Game. It Is Here For Optimization Of The Game.
 TLOC = 0
 ITLOC = 0
@@ -86,6 +90,11 @@ BOC = 0
 WEALEA = 0
 MILLEA = 0
 POTLEA = 0
+## Flee System Vars
+FC = 0
+FCM2 = 0
+FCM1 = 0
+FCS = 0
 ## Enemy Sprites For The Game
 ESL1WBR = "Wet Paper Bag + Rat    "
 ESL2WBR = "-----------------------"
@@ -102,9 +111,9 @@ ESL3CB = "THE THIRD"
 ESL1AOD = "G E T"
 ESL2AOD = "O F F"
 ESL3AOD = "M Y L A W N"
-ESL1HWOC = "Why Is THis Cheese A Heritic?"
+ESL1HWOC = "Why Is This Cheese A Heritic?"
 ESL2HWOC = "Well You See...."
-ESL3HWOC = "It Think That Melted Cheese Is Good On Popcorn"
+ESL3HWOC = "It Just Is One"
 ESL1LR = "Its A Rat..."
 ESL2LR = "Thats Large.."
 ESL3LR = "Seems Pretty Normal To Me"
@@ -116,7 +125,88 @@ ESL2G = "GOLD"
 ESL3G = "GOLD"
 ## Sets The Current Quest To No Quest
 CCQ = 0
+## For The Hallway Smooth Loader
+HSLN = 0
 ## Definitions For The Game
+## Flee Meter And Flee System Definition
+def FMAFS():
+    global PH
+    global FC
+    global PMH
+    global FOOD
+    global H
+    global FM
+    global FCM2
+    global FCM1
+    global FMM
+    FC = 0
+    ## Flee Chance Eaquations
+    ## FCM1 Is Flee Chance Modifier 1
+    FCM1 = -1 * ((PMH / 4) - (1 * ( PMH - PH)))
+    ## Checks If The Food Meter Is Below 0
+    ## If The Food Meter Is Not Below 0 It Will Calculate FCM2
+    if FM > 0:
+    ## FCM2 Is Flee Chance Modifier 2 
+        FCM2 = FMM * 2 + (-1 * (FM - FMM))
+    ## If FCM2 Is Below Or Equal To 0, It Will Set It To Zero
+    ## This Prevents The Flee Chance Rising, The Lower Your Hunger Is
+    if FCM2 <=0:
+        FCM2 = 0
+    ## FCM Is Flee Chance Modifier
+    ## This Incorporates FCM1 And FCM2
+    FCM = (FCM1 / 2) + ( 2 + FCM2 / 4)
+    ## If FCM Is Greater Or Equal To 100, It Will Set It To One Hundered
+    ## This Prevents random.randint Errors When It Comes To The Min Range Being Higher Than The Max Range
+    if FCM >= 100:
+        FCM = 100
+    ## Checks To See If FCM Is A Neg Int
+    ## If It Is It Will Set It To A Positive Int Of The Same Number
+    elif FCM <= 0:
+        FCM = FCM * -1
+    ## Calculates The Flee Chance
+    FC = 100 - FCM
+    if FC <= -1:
+        FC = FC *-1
+## Hall Smooth Loader System
+def HSL():
+    global HSL
+    global RNBP
+    global HSLN
+    HSLG = RNBP
+    if RNBP == 2:
+        HSLN = HSLN + HSLG
+    elif RNBP == 3:
+        HSLN = HSLN + HSLG - 2
+    elif RNBP == 4:
+        HSLN = HSLN + HSLG - 3
+    elif RNBP == 5:
+        HSLN = HSLN + HSLG - 4
+    elif RNBP == 6:
+        HSLN = HSLN + HSLG - 5
+    
+    print("")
+    if HSLN == 0:
+        print("Progress:____________________")
+    elif HSLN == 1:
+        print("Progress:##__________________")
+    elif HSLN == 2:
+        print("Progress:####________________")
+    elif HSLN == 3:
+        print("Progress:######______________")
+    elif HSLN == 4:
+        print("Progress:########____________")
+    elif HSLN == 5:
+        print("Progress:##########__________")
+    elif HSLN == 6:
+        print("Progress:############________")
+    elif HSLN == 7:
+        print("Progress:##############______")
+    elif HSLN == 8:
+        print("Progress:################____")
+    elif HSLN == 9:
+        print("Progress:##################__")
+    elif HSLN >= 10:
+        print("Progress:####################")
 ## Potion Creation System
 def HPS():
     ## Variables For Potion Creation
@@ -136,25 +226,25 @@ def HPS():
         print("")
         print("         || Potion Creation ||         ")
         print(" --------------------------------------")
-        print(" [1] || 5 Small Potions ||")
+        print(" / [1] || 5 Small Potions ||")
         print(" --------------------------------------")
         print(" 0 4 Weak Leaves / " + str(WEALEA) + " Weak Leaves")
         print(" 0 1 Empty Bucket / " + str(BUCK) + " Buckets")
         print(" --------------------------------------")
-        print(" [2] || 3 Medium Potions ||")
+        print(" / [2] || 3 Medium Potions ||")
         print(" --------------------------------------")
         print(" 0 6 Weak Leaves / " + str(WEALEA) + " Weak Leaves")
         print(" 0 3 Mild Leaves / " + str(MILLEA) + " Mild Leaves")
         print(" 0 1 Empty Bucket / " + str(BUCK) + " Buckets")
         print(" --------------------------------------")
-        print(" [3] || 2 Large Potions ||")
+        print(" / [3] || 2 Large Potions ||")
         print(" --------------------------------------")
         print(" 0 8 Weak Leaves / " + str(WEALEA) + " Weak Leaves")
         print(" 0 6 Mild Leaves / " + str(MILLEA) + " Mild Leaves")
         print(" 0 3 Potent Leaves / " + str(POTLEA) + " Potent Leaves")
         print(" 0 1 Empty Bucket / " + str(BUCK) + " Buckets")
         print(" --------------------------------------")
-        print(" [4] Exit ")
+        print(" / [4] Exit ")
         print(" --------------------------------------")
         print(" You Currently Have: ")
         print(" " + str(SMLLP) + " Small Potions")
@@ -240,6 +330,11 @@ def GSCD():
     global BOC
     global EXP
     global EXPR
+    global WEALEA
+    global MILLEA
+    global POTLEA
+    global FM
+    global FMM
     global SMLLP
     global MEDP
     global LARGEP
@@ -276,6 +371,7 @@ def GSCD():
         print(" Please Input Your Save Code")
         SCR = input("")
         ## Finds The Variable In The Save Code String
+        ##WEALEA0MILLEA0POTLEA0FM100FMM100
         SCRLEN = len(SCR)
         print(SCRLEN)
         GROPMASC = SCR.find("PMA")
@@ -314,6 +410,11 @@ def GSCD():
         SCRFOOD = SCRPMA.find("FOOD")
         SCRKEY = SCRPMA.find("KEY")
         SCRCQ = SCRPMA.find("CCQ")
+        SCRWEALEA = SCRPMA.find("WEALEA")
+        SCRMILLEA = SCRPMA.find("MILLEA")
+        SCRPOTLEA = SCRPMA.find("POTLEA")
+        SCRFM = SCRPMA.find("FM")
+        SCRFMM = SCRPMA.find("FMM")
         ## Prints Where The Save Code Is In The Sting, This Is Mainly Used For Testing Purposes
         print(SCRPMH)
         print(SCRCRTC)
@@ -337,6 +438,11 @@ def GSCD():
         print(SCRFOOD)
         print(SCRKEY)
         print(SCRCQ)
+        print(SCRWEALEA)
+        print(SCRMILLEA)
+        print(SCRPOTLEA)
+        print(SCRFM)
+        print(SCRFMM)
         SCRPH = SCRPMA.find("PH")
         ## Convets Save Code To Values
         PMINA = SCRAPMA[SCRPMINAEL:SCRPMINAELE]
@@ -391,7 +497,17 @@ def GSCD():
         SCRKEY = SCRKEY + 3
         KEY = SCRPMA[SCRKEY:SCRCQ]
         SCRCQ = SCRCQ + 3
-        CCQ = SCRPMA[SCRCQ:]
+        CCQ = SCRPMA[SCRCQ:SCRWEALEA]
+        SCRWEALEA = SCRWEALEA + 6
+        WEALEA = SCRPMA[SCRWEALEA:SCRMILLEA]
+        SCRMILLEA = SCRMILLEA + 6
+        MILLEA = SCRPMA[SCRMILLEA:SCRPOTLEA]
+        SCRPOTLEA = SCRPOTLEA + 6
+        POTLEA = SCRPMA[SCRPOTLEA:SCRFM]
+        SCRFM =  SCRFM + 2
+        FM = SCRPMA[SCRFM:SCRFMM]
+        SCRFMM = SCRFMM + 3
+        FMM = SCRPMA[SCRFMM:]
         ## Prints The Loaded Values
         print("")
         print(" LOADED STATS ")
@@ -423,7 +539,11 @@ def GSCD():
         print(" FOOD " + str(FOOD))
         print(" KEY " + str(KEY))
         print(" CCQ " + str(CCQ))
-        print("")
+        print(" WEALEA " + str(WEALEA))
+        print(" MILLEA " + str(MILLEA))
+        print(" POTLEA " + str(POTLEA))
+        print(" FM " + str(FM))
+        print(" FMM " + str(FMM))
         ## Changes The Values To Integers So The Code Wont Hit A Base 10 Value Error
         EXP = int(EXP)
         EXPR = int(EXPR)
@@ -595,8 +715,6 @@ def TAVERNI():
             os.system('cls' if os.name == 'nt' else 'clear')
             print(" You Go And Check Out Who Is At The Tables")
             time.sleep(.5)
-            print(" INDEV: THERE WILL BE MORE ADDED TO THIS BUT FOR THE TIME BEING THIS IS IT.")
-            time.sleep(1)
             print(" You See Multiple People That Look Like They Might Be Worth Talking To.")
             time.sleep(.5)
             while TTPLOC == 1:
@@ -709,7 +827,7 @@ def TAVERNI():
                     if WBPBQALOC == 1 and CCQ == 0 and WBPBCB == 0:
                         print("")
                         print(" [1] Sure, What Do You Need Me To Do? ")
-                        print(" [2] (Leave) Nah, Maybe Later, You Are Kinda Ugly, Quit Being Ugly")
+                        print(" [2] (Leave) Nah, Maybe Later, You Are Kinda Ugly, Quit Being Ugly, It's Not That Hard")
                         print("")
                         WBPBQA = input("")
                         if WBPBQA == "1":
@@ -860,26 +978,30 @@ def QM():
     print("     ------------- ")
     if CCQ == 0:
         print("")
+        print("  0          0")
         print(" _^__________^_")
         print(" | No Current }")
         print(" ;   Quest    |")
         print(" ---=----~~-=--")
     elif CCQ == "WBPB":
         print("")
+        print("    0                  0         0                        0")
         print("   _^__________________^_       _^________________________^_")
         print("   | Weebs, Body        }       { Go Find And Kill The Weeb:")
         print("   { Pillows, And Blood :       { Turn In The Family Sword |")
         print("   --=---~-----=~--=--~--       -----==----~----=-------~~--")
     elif CCQ == "TOTT":
         print("")
+        print("    0                  0         0                        0")
         print("   _^__________________^_       _^________________________^_")
         print("   | Trick Of The Treat }       { Go Find The Old Ladie's  :")
         print("   {                    :       { Child.                   |")
         print("   --=---~-----=~--=--~--       -----==----~----=-------~~--")
     elif CCQ == "D10B":
         print("")
-        print("                    __^_")
-        print("            _______/   | ")
+        print("    0                 0")
+        print("    0               __^_")
+        print("    0       _______/   | ")
         print("   _^______/ B#er#     | ")
         print("  | Dri#k #0  e  s  =~-|")
         print("  |    n  1~~~=-~~-/")
@@ -904,12 +1026,13 @@ def WRR():
     global MILLEA
     global POTLEA
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("~~~~~~~~~~~~~")
+    print("/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
     time.sleep(1)
     print("!!!")
     time.sleep(1)
     print(" You found a room with shelves filled with poultices and herbs and potions. You grab some of them for the long trip ahead ")
     input("Press Enter To Continue")
+    print("\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
     ## Determins How Many Potions The Player Finds
     SMPG = random.randint(1,2)
     MEDPG = random.randint(0,2)
@@ -1028,7 +1151,6 @@ def WRR():
             print("")
             print(" Press Enter To Continue")
             input("")
-            
     ## Banquet Room Used For Gaining Food.
         os.system('cls' if os.name == 'nt' else 'clear')
         print("You find a very long room with a scarlet red banquet table full of food.")
@@ -1162,20 +1284,27 @@ def ECA():
     ## HUD For Combat
     while CSCF == 1:
         os.system('cls' if os.name == 'nt' else 'clear')
+        print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+        print("    / / /HALL/USER/COMBAT/ / / ")
+        print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
         print("")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        print("| |" + str(PH) + " / " + str(PMH) + " | | " + str(EH) + " / " + str(EMH) + "|   ")
-        print("|   Your HP  | | " + str(ET) + " HP  |")
-        print("| [1] Attack                ")
-        print("| [2] Flee               " + str(ESL1))
-        print("|                        " + str(ESL2))
-        print("|                        " + str(ESL3))
-        print("|                           ")
-        print("|                           ")
-        print("|                           ")
-        print("|                           ")
-        print("|                           ")
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+        print("")
+        print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("  | |" + str(PH) + " / " + str(PMH) + " | | " + str(EH) + " / " + str(EMH) + "|   ")
+        print("  |   Your HP  | | " + str(ET) + " HP  |")
+        print("  | [1] Attack                ")
+        print("  | [2] Flee               " + str(ESL1))
+        print("  | " + str(FC) + "%                  " + str(ESL2))
+        print("  |                        " + str(ESL3))
+        print("  |                           ")
+        print("  |                           ")
+        print("  |                           ")
+        print("  |                           ")
+        print("  |                           ")
+        print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("")
+        print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
         print("")
         CSPC = input("")
         ## Attack System For Both Enemy And Player. It Utilizes Their Min And Max Attack Values
@@ -1199,24 +1328,44 @@ def ECA():
                 PH = PH - PDT
         ## Flee System (Might Be Implemented So You Would Have A Chance To Flee Combat)
         elif CSPC == "2":
-            print(" You can't flee a fight!")
             time.sleep(1)
-            print(" COWARD!")
-            time.sleep(1)
+            FCC = random.randint(1,100)
+            if FCC >= FC:
+                EH = 0
+                FCS = 1
+                print("")
+                print(" You Fled The Fight Successfully")
+                print("")
+                time.sleep(1)
         ## System That Determines If The Enemy Is Dead Or Not
         if EH <= 0:
             CSCF = 0
             os.system('cls' if os.name == 'nt' else 'clear')
-            print("You Won The Fight!")
-            time.sleep(1)
             ## Chooses A Random Number For The Amount Of EXP Gained
-            EXPGFC = random.randint(70,150)
-            print(" You Gained " + str(EXPGFC) + " XP!")
-            EXP = EXP + EXPGFC
-            GGFC = random.randint(2,5)
-            print(" You Also Gained " +str(GGFC) + " Sepi's")
-            PGT = PGT + GGFC
-            time.sleep(2)
+            if FCS != 1:
+                print("")
+                print(" You Finished The Fight!")
+                time.sleep(1)
+                EXPGFC = random.randint(70,150)
+                print(" You Gained " + str(EXPGFC) + " XP!")
+                EXP = EXP + EXPGFC
+                GGFC = random.randint(2,5)
+                print(" You Also Gained " +str(GGFC) + " Sepi's")
+                PGT = PGT + GGFC
+                time.sleep(2)
+            elif FCS == 1:
+                os.system('cls' if os.name == 'nt' else 'clear')
+                time.sleep(1)
+                print("")
+                print(" You Fled The Fight And Gained Reduced Rewards")
+                time.sleep(1)
+                EXPGFC = random.randint(45,75)
+                print(" You Gained " + str(EXPGFC) + " XP!")
+                EXP = EXP + EXPGFC
+                GGFC = random.randint(1,3)
+                print(" You Also Gained " +str(GGFC) + " Sepi's")
+                PGT = PGT + GGFC
+                time.sleep(2)
             ## Checks To See If The Player Had The Quest For This Encounter And If The Enemy Was A Basement Dweller
             if CCQ == "WBPB" and ET == "Basement Dweller's":
                 ## Gives The Player The Quest Items
@@ -1244,10 +1393,14 @@ def ECA():
                 time.sleep(.5)
                 print(" I Should Head To The Tavern And Ask The Old Lady If Her Kid Likes Candy ")
             ## System That Increases The Enemy's Difficulty
-            EMH = EMH + random.randint(5,10)
-            EH = EMH
-            EMINA = EMINA + random.randint(1,2)
-            EMA = EMA + random.randint(2,4)
+            if FCS != 1:
+                EMH = EMH + random.randint(5,10)
+                EH = EMH
+                EMINA = EMINA + random.randint(1,2)
+                EMA = EMA + random.randint(2,4)
+            print("")
+            print("Press Enter To Continue")
+            input("")
         ## Determines If Player Is Dead
         if PH <= 0:
             ## Kills The Game So The Player Is Forced To Restart The Code
@@ -1272,30 +1425,6 @@ def INVENTORY():
     global KEY
     global BUCK
     global FOOD
-    ## Key For What All The Symbols Mean (Will Be More Important After Later Updates)
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print("")
-    ## Shows A Item Key To What Is What
-    print("Key:")
-    time.sleep(.1)
-    print("X = Empty Slot")
-    time.sleep(.1)
-    print("i = Small Potion ")
-    time.sleep(.1)
-    print("l = Medium Potion ")
-    time.sleep(.1)
-    print("I = Large Potion ")
-    time.sleep(.1)
-    print("t = Key ")
-    time.sleep(.1)
-    print("u = Bucket")
-    time.sleep(.1)
-    print("U = Large Bucket")
-    time.sleep(.1)
-    print("0 = Food")
-    print("")
-    print("[1] Continue to inventory")
-    input("")
     os.system('cls' if os.name == 'nt' else 'clear')
     ## Shows Values For Each Item And Consumable The pLayer Picks Up
     print("")
@@ -1412,56 +1541,71 @@ def INVENTORY():
         HPS()
 ## Basic Stats Screen For The Players Stats
 def STATS():
+    global FC
+    global FM
+    global FMM
+    FCD = str(FC)
     os.system('cls' if os.name == 'nt' else 'clear')
     print("")
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+    print("    / / /HALL/USER/STATS/ / / ")
+    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+    print("")
+    print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     time.sleep(.5)
-    print("Player Attack Min: " + str(PMINA) + " Max: " + str(PMA) )
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(" / Player Flee Chance: " + FCD[:4] + "%")
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     time.sleep(.5)
-    print("Player Health Current: " + str(PH) + " Max: " + str(PMH))
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(" / Player Attack Min: " + str(PMINA) + " Max: " + str(PMA) )
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     time.sleep(.5)
-    print("Player Defence Min: " + str(PMIND) + " Max: " + str(PMD))
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(" / Player Health Current: " + str(PH) + " Max: " + str(PMH))
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     time.sleep(.5)
-    print("Player Critical Chance: " + str(CRTC))
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(" / Player Defence Min: " + str(PMIND) + " Max: " + str(PMD))
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     time.sleep(.5)
-    print("Player Critical Multiplier: " + str(CRTM))
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print(" / Player Critical Chance: " + str(CRTC))
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     time.sleep(.5)
-    print("[1] Exit Stats")
+    print(" / Player Critical Multiplier: " + str(CRTM))
+    print("  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    time.sleep(.5)
+    print(" / [1] Exit Stats")
+    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
     input("")
 ## Shows The HUD When It Is Called. This Is The HUD Layout And Main Control Area For The Game
 def HUDON():
     global CPL
+    FMAFS()
     os.system('cls' if os.name == 'nt' else 'clear')
     print("")
     print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
-    print("  / / / HALL/USER/MENU / / /")
-    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~/")
+    print("  / / / HALL/USER/MENU / / /    ")
+    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
     print("")
     print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
     print("     _")
     print("    /|\ ")
     print("    |||   " + str(PH) + " / " + str(PMH) + " HP ") 
+    print("    |||   " + str(FM) + " / " + str(FMM) + " Hunger")
     print("    |||   " + str(EXP) + " / " + str(EXPR) + " XP ")
     print("    |||   Distance Traveled: " + str(DM) + "M ")
     print("    |||   Sepi: " + str(PGT) + "  ")
     print("    |||   Level: " + str(CPL) + " ")
     print("    \|/ ")
     print("")
-    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~/")
+    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~/" )
     print("")
     print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ") 
     print("     _")
     print("    /|\ ")
-    print("    |||   [1] Move Forward")
-    print("    |||   [2] Stats")
-    print("    |||   [3] Inventory")
-    print("    |||   [4] Options")
-    print("    |||   [5] Quests")
+    print("    |||   / [1] Move Forward")
+    print("    |||   / [2] Stats")
+    print("    |||   / [3] Inventory")
+    print("    |||   / [4] Options")
+    print("    |||   / [5] Quests")
     print("    \|/")
     print("")
     print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
@@ -1482,12 +1626,16 @@ def OPTIONS():
     global GC
     os.system('cls' if os.name == 'nt' else 'clear')
     print("")
-    print(" /~~~~~~~~~~~~~~~~\ ")
-    print(" [1] HUD Toggle ")
-    print(" [2] Exit Options")
-    print(" [3] Save And Load")
-    print(" [4] Quit Game")
-    print("\~~~~~~~~~~~~~~~~/")
+    print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+    print("   / / /HALL/USER/SETTINGS/ / / ")
+    print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+    print("")
+    print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+    print("  / [1] HUD Toggle ")
+    print("  / [2] Exit Options")
+    print("  / [3] Save And Load")
+    print("  / [4] Quit Game")
+    print("\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/")
     print("")
     OPC = input("")
     ## Toggles HUD On And Off
@@ -1504,7 +1652,7 @@ def OPTIONS():
     elif OPC == "4":
         GC = 0
             
-# Code That Runs The Game
+## Code That Runs The Game
 BG = input("Boot? Y/N ")
 os.system('cls' if os.name == 'nt' else 'clear')
 ## Disclaimers And Info
@@ -1530,25 +1678,30 @@ if BG != "//" or "TS" or "AS":
     time.sleep(1)
     if BG != "//":
         RNBP = random.randint(2,8)
+        
         for i in range(RNBP):
             print("")
             print("")
             print("   Booting /")
+            HSL()
             time.sleep(.3)
             os.system('cls' if os.name == 'nt' else 'clear')
             print("")
             print("")
             print("   Booting -")
+            HSL()
             time.sleep(.3)
             os.system('cls' if os.name == 'nt' else 'clear')
             print("")
             print("")
             print("   Booting \ ")
+            HSL()
             time.sleep(.3)
             os.system('cls' if os.name == 'nt' else 'clear')
             print("")
             print("")
             print("   Booting | ")
+            HSL()
             time.sleep(.3)
             os.system('cls' if os.name == 'nt' else 'clear')
         print("")
@@ -1558,9 +1711,9 @@ if BG != "//" or "TS" or "AS":
         os.system('cls' if os.name == 'nt' else 'clear')
         ## Version Info And INDEV Info
         print("Game Version: V1.5")
-        print("Use The Google Form Link To Report Bugs Or If You Have Any Suggestions")
-        print("https://forms.gle/Z2s5MRe9VnWpf9Gk8")
-        print("I Strongly Encourage You To Submit Forms So I Can Improve The Game Quicker")
+        print("")
+        print("This Games SRC Code Is Officially Licenced On Github.")
+        print("")
         print("Press Enter To Continue")
         input("")
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -1606,7 +1759,7 @@ if HOOO != "1" and HOOO != "2":
 ## Main While Loop That Runs The Entire Game Mainly By Calling Definitions
 while GC == 1:
     ## Level Up System
-    if EXP >= EXPR:
+    if EXP >= EXPR and PH >= 1:
         ## Takes Playes Total EXP And Subtracts The EXP Required To Level Up
         EXP = EXP - EXPR
         ## Chooses A Random Number T0 Increase The EXP Required To Level Up By
@@ -1624,18 +1777,22 @@ while GC == 1:
         PMINA = PMINA + 3
         PMD = PMD + 3
         PMIND = PMIND + 3
-        ## This Is Where VLOC Is Used
+        ## This Is Where VLOC Is Used.
         while VLOC == 1:
             print("")
             print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
-            print("  Choose one stat to increase")
-            print("  [1] Attack Min +5 ")
-            print("  [2] Attack Max +5 ")
-            print("  [3] Defense Min +5 ")
-            print("  [4] Defence Max +5 ")
-            print("  [5] Max Health +5 ")
-            print("  [6] Critical Hit Chance +3 ")
-            print("  [7] Critical Hit Multiplier +1 ")
+            print("      / / /HALL/USER/LVLUP/ / / ")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/")
+            print("")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+            print("  / Choose one stat to increase")
+            print("  / [1] Attack Min +5 ")
+            print("  / [2] Attack Max +5 ")
+            print("  / [3] Defense Min +5 ")
+            print("  / [4] Defence Max +5 ")
+            print("  / [5] Max Health +5 ")
+            print("  / [6] Critical Hit Chance +3 ")
+            print("  / [7] Critical Hit Multiplier +1 ")
             print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/")
             print("")
             LUC = input("")
@@ -1696,13 +1853,17 @@ while GC == 1:
         if EC == 1:
             os.system('cls' if os.name == 'nt' else 'clear')
             print("")
-            print("\~~~~~~~~~~~~~~~~~~/")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+            print("   / / / HALL/USER/COMBAT/ / / ")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            print("")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
             time.sleep(1)
-            print("!!!")
+            print(" !!!")
             time.sleep(1)
-            print("You are being attacked!")
+            print(" You are being attacked!")
             time.sleep(.5)
-            print("\~~~~~~~~~~~~~~~~~~/")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/")
             CSCF = 1
             ECA()
             DJT = random.randint(1,3)
@@ -1711,37 +1872,66 @@ while GC == 1:
             ## Deals With The Damage The Player Will Take When Moving
             PH = PH - DJT/2
             EXP = EXP + DJT
+            FMD = DJT - random.randint(3,10)
+            if FMD <= -1:
+                FMD = FMD * -1
+            FM = FM - FMD
+            if FMD <= 0:
+                print(" But You Found Some Berries ")
+            print("  And Are Now " + str(FMD) + " Points Hungrier")
             input("Press Enter To Continue")
         ## Deals With All The Different Rooms The Player Will Encounter
         LC = random.randint(1,10)
         if LC == 1:
             os.system('cls' if os.name == 'nt' else 'clear')
             print("")
-            print("\~~~~~~~~~~~~~~~~/")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+            print("    / / / HALL/USER/TROOM/ / / ")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            print("")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
             time.sleep(1)
-            print("!!!")
+            print("  !!!")
             time.sleep(1)
-            print("You found a treasure room!")
+            print("  You found a treasure room!")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            print("")
             ## Generates A Random Amount Of EXP
-            EXPG = random.randint(140,200)
+            EXPG = random.randint(240,500)
             time.sleep(.5)
-            print("The room had a strange glowing cube in it. You ignored it and gained " + str(EXPG) + " XP!" )
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+            print("  The room had a strange glowing cube in it. You ignored it and gained " + str(EXPG) + " XP!" )
             DJT = random.randint(3,5)
             GGFC = random.randint(8,12)
-            print("You Also Gained " +str(GGFC) + " Sepi's")
+            print("  You Also Gained " +str(GGFC) + " Sepi's")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            print("")
             PGT = PGT + GGFC
             time.sleep(.5)
             ## Gives The Player A 33% Chance To Get A Key For A Locked Chest
             LRKC = random.randint(1,3)
             if LRKC == 1:
+                print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+                print("  You Found A Key Inside The Room")
+                print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+                print("")
                 KEY = KEY + 1
-            print("You also managed to walk " + str(DJT) + "M")
+                FMD = DJT - random.randint(2,6)
+                if FMD <= -1:
+                    FMD = FMD * -1
+                FM = FM - FMD
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+            print("  You also managed to walk " + str(DJT) + "M")
+            print("  And Are Now " + str(FMD) + " Points Hungrier")
+            print("  Press Enter To Continue")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            print("")
             DM = DM + DJT
             PH = PH - DJT/2
             EXP = EXP + DJT
             EXP = EXP + EXPG
             time.sleep(.5)
-            input("Press Enter To Continue")
+            input("")
         ## This Is For The Supply Room, It Just Basically Calls The Supply Room Definition
         WR = random.randint(1,12)
         if WR == 1:
@@ -1753,16 +1943,31 @@ while GC == 1:
         if EC != 1 and LC != 1 and WR!= 1 and TRC != 1:
             os.system('cls' if os.name == 'nt' else 'clear')
             print("")
-            print("\~~~~~~~~~~~~~~~~/")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
+            print("   / / /HALL/USER/WALK/ / / ")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            time.sleep(.3)
+            print("")
+            print(" /~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\ ")
             time.sleep(.5)
-            print("You just kept on walking...")
+            print("  You just kept on walking...")
             time.sleep(.5)
             DJT = random.randint(3,5)
-            print("And nothing happened but you walked " + str(DJT) + "M")
             PH = PH - DJT/2
             DM = DM + DJT
             EXP = EXP + DJT
-            input("Press Enter To Continue")
+            FMD = DJT - random.randint(2,4)
+            if FMD <= -1:
+                FMD = FMD * -1
+            FM = FM - FMD
+            print("  You Walked " + str(DJT) + " Meters")
+            print("  And Took " + str(DJT) + " Damage")
+            if FMD <= 0:
+                print(" But You Found Some Berries ")
+            print("  And Are Now " + str(FMD) + " Points Hungrier")
+            print("  Press Enter To Continue")
+            print(" \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/ ")
+            input("")
     ## Rest Of The Player UI
     elif PMMC == "2":
         ## Calls The Stats Definition
@@ -1777,6 +1982,19 @@ while GC == 1:
         QM()
         
 ## For When The Game Ends, It Will Show This Exit Sequence
+if PH <= 0:
+    ## Kills The Game So The Player Is Forced To Restart The Code
+    GC = 0
+    os.system('cls' if os.name == 'nt' else 'clear')
+    time.sleep(.5)
+    print("")
+    print(" GAME OVER")
+    print(" You Died!")
+    print("")
+    print(" Please Stop And Start The Game")
+    EGFL = 1
+    while EGFL == 1:
+        HGFL = 0
 if GC == 0:
     os.system('cls' if os.name == 'nt' else 'clear')
     for i in range(4):
@@ -1811,7 +2029,7 @@ if GC == 0:
 
     ##
     ## Example Save Code
-    ## PMA200PMINA10PMD2000PMIND10PMH500PH198.55CRTC5CRTM2PGT5DM0CPL10PQIBP0PQIWK0WBPBCB0TOTTCQ0BOC0EXP50EXPR300SMLLP5MEDP2LARGEP1EMINA10EMA10EMH100FOOD5KEY2CCQ0
+    ## PMA200PMINA10PMD2000PMIND10PMH500PH198.55CRTC5CRTM2PGT5DM0CPL10PQIBP0PQIWK0WBPBCB0TOTTCQ0BOC0EXP50EXPR300SMLLP5MEDP2LARGEP1EMINA10EMA10EMH100FOOD5KEY2CCQ0WEALEA0MILLEA0POTLEA0FM100FMM100
     ##
     ## End Of Code
     ##
